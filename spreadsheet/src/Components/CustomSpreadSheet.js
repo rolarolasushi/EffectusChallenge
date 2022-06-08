@@ -6,7 +6,7 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 const Grid = () => {
-    const [rowNum, setRowNum] = useState(3);
+    const [rowNum, setRowNum] = useState(0);
     const [rows, setRows] = useState([]);
     const [colDefsMedalsExcluded, setColDefsMedalsExcluded] = useState([
         { field: '1' },
@@ -52,8 +52,14 @@ const Grid = () => {
     }
 
     const onAddBtnClick = event => {
-        setRows(rows.concat(<AgGridColumn field={rowNum.toString()} sortable={true} filter={true} width={300} editable={true}></AgGridColumn>));
-        console.log(rows)
+        let rowTotal = rowNum + 1;
+        setRows(rows.concat(<AgGridColumn field={rowTotal.toString()} sortable={true} filter={true} width={300} editable={true}></AgGridColumn>));
+        setRowNum(rowTotal);
+    };
+    const onDeleteBtnClick = event => {
+        let rowTotal = rowNum - 1;
+        rows.pop()
+        setRowNum(rowTotal);
     };
 
 
@@ -71,6 +77,9 @@ const Grid = () => {
                     ></TextField>
                     <button onClick={onAddBtnClick}>
                         Add Row
+                    </button>
+                    <button onClick={onDeleteBtnClick}>
+                        Delete Row
                     </button>
                     <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
                         <AgGridReact
