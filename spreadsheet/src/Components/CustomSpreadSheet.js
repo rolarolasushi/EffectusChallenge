@@ -60,21 +60,17 @@ const Grid = () => {
 
     const onCellValueChanged = ({ data }) => {
         var focusedCell = gridRef.current.api.getFocusedCell();
-        var asd = gridRef.current.api.getEditingCells()
         let rowIndex = focusedCell.rowIndex
-        var row = gridRef.current.api.getDisplayedRowAtIndex(rowIndex);
-        var cellValue = gridRef.current.api.getValue(focusedCell.column.colId, row.node)
+        var colNum = focusedCell.column.colId;
         console.log(data)
-        let input;
-        for (let i = 1; i <= columnNum; i++) {
-            if (data[i] != null) {
-                input = data[i];
-            }
-        }
+        let input = data[colNum];
+        let op1 = input;
+        let op2 = input;
         console.log(input);
         let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
         if (operation === 'SUM(;)') {
             console.log("suma")
+            console.log(rowData)
         } else if (operation === 'SUB(;)') {
             console.log("resta")
         }
