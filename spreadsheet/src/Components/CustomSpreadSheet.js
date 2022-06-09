@@ -67,29 +67,47 @@ const Grid = () => {
         let op1 = input;
         let op2 = input;
         console.log(input);
-        let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
-        if (operation === 'SUM(;)') {
-            op1 = op1.slice(4, 6);
-            op2 = op2.slice(-3, -1);
-            convertCellToValue(op1, op2)
-            //AddCells(op1,)
-        } else if (operation === 'SUB(;)') {
-            console.log("resta")
+        if (input != null && input.length == 10) {
+            let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
+            if (operation === 'SUM(;)') {
+                op1 = op1.slice(4, 6);
+                op2 = op2.slice(-3, -1);
+                let res = convertAndAddValue(op1, op2)
+                console.log(res)
+            } else if (operation === 'SUB(;)') {
+                op1 = op1.slice(4, 6);
+                op2 = op2.slice(-3, -1);
+                console.log("resta")
+                let res = convertAndAddDec(op1, op2)
+                console.log(res)
+                let items = [...rowData];
+                let item = {
+                    ...items[rowIndex - 1]
+                }
+                //item = rowData.find(element => element[0] == op1[0]);
+                item[colNum] = res.toString()
+                items[colNum] = item
+                //found[colNum] = res
+                setRowData(items)
+                console.log(rowData)
+            }
         }
-    };
-    const AddCells = () => {
 
-    }
-    const convertCellToValue = (op1, op2) => {
+    };
+    const convertAndAddValue = (op1, op2) => {
         let found = rowData.find(element => element[0] == op1[0]);
         let found2 = rowData.find(element => element[0] == op2[0]);
-        let fin = parseInt(found[op1[1]]) + parseInt(found2[op2[1]]);
+        return parseInt(found[op1[1]]) + parseInt(found2[op2[1]]);
     }
     const onRowEditingStarted = ({ data }) => {
         console.log("Row editing")
         console.log(data)
     }
-
+    const convertAndAddDec = (op1, op2) => {
+        let found = rowData.find(element => element[0] == op1[0]);
+        let found2 = rowData.find(element => element[0] == op2[0]);
+        return parseInt(found[op1[1]]) - parseInt(found2[op2[1]]);
+    }
 
     return (
         <div className="ag-theme-balham">
