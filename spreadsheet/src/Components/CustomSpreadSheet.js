@@ -69,14 +69,21 @@ const Grid = () => {
         console.log(input);
         let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
         if (operation === 'SUM(;)') {
-            console.log("suma")
-            console.log(rowData)
+            op1 = op1.slice(4, 6);
+            op2 = op2.slice(-3, -1);
+            convertCellToValue(op1, op2)
+            //AddCells(op1,)
         } else if (operation === 'SUB(;)') {
             console.log("resta")
         }
     };
     const AddCells = () => {
 
+    }
+    const convertCellToValue = (op1, op2) => {
+        let found = rowData.find(element => element[0] == op1[0]);
+        let found2 = rowData.find(element => element[0] == op2[0]);
+        let fin = parseInt(found[op1[1]]) + parseInt(found2[op2[1]]);
     }
     const onRowEditingStarted = ({ data }) => {
         console.log("Row editing")
