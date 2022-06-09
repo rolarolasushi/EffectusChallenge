@@ -6,30 +6,15 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 const Grid = () => {
-    const [rowNum, setRowNum] = useState(0);
-    const [rows, setRows] = useState([]);
-    const [colDefsMedalsExcluded, setColDefsMedalsExcluded] = useState([
-        { field: '1' },
-        { field: '2' },
-        { field: '3' },
-    ]);
+    const [columnNum, setColumnNum] = useState(-1);
+    const [column, setColumn] = useState([]);
+    const [rows, setRows] = useState(-1);
     const gridRef = useRef();
-    // const [rowData, setRowData] = useState([
-    //     { 1: 'Gonzalez, Juan J.', 2: '84612323', 3: "Arevalo 1889, CABA", },
-    //     { 1: 'Ruperto, Jorge', 2: 'CONT0100HRC000232357234', 3: "Av. Cordoba 1325, Munro, Buenos Aires" },
-    //     { 1: 'Mondino, Gabriela M.', 2: '61132523', 3: "Puerto Principe 583, Florida, Buenos Aires" },
-    //     { 1: 'Gonzalez, Juan J.', 2: '84612323', 3: "Arevalo 1889, CABA" },
-    //     { 1: 'Ruperto, Jorge', 2: 'CONT0100HRC000232357234', 3: "Av. Cordoba 1325, Munro, Buenos Aires" },
-    // ])
-    const rowData = [
-        { 1: 'Gonzalez, Juan J.', 2: '84612323', 3: "Arevalo 1889, CABA", },
-        { 1: 'Ruperto, Jorge', 2: 'CONT0100HRC000232357234', 3: "Av. Cordoba 1325, Munro, Buenos Aires" },
-        { 1: 'Mondino, Gabriela M.', 2: '61132523', 3: "Puerto Principe 583, Florida, Buenos Aires" },
-        { 1: 'Gonzalez, Juan J.', 2: '84612323', 3: "Arevalo 1889, CABA" },
-        { 1: 'Ruperto, Jorge', 2: 'CONT0100HRC000232357234', 3: "Av. Cordoba 1325, Munro, Buenos Aires" },
-    ]
+    const [rowData, setRowData] = useState([
+    ])
     const defaultColDef = {
         resizable: true,
+
     };
     const onFilterTextBoxChanged = useCallback(() => {
         gridRef.current.api.setQuickFilter(
@@ -37,30 +22,70 @@ const Grid = () => {
         );
     }, []);
 
-    const addRow2 = () => {
-        gridRef.current.api.setColumnDefs(colDefsMedalsExcluded);
-    };
-
-    const addRow = () => {
-        let rowTotal = rowNum + 1;
-        setRowNum(rowTotal);
-        for (var i = rowNum; i < rowTotal; i++) {
-            i++;
-            colDefsMedalsExcluded.push({ field: i.toString() })
-        }
-        addRow2()
-    }
-
     const onAddBtnClick = event => {
-        let rowTotal = rowNum + 1;
-        setRows(rows.concat(<AgGridColumn field={rowTotal.toString()} sortable={true} filter={true} width={300} editable={true}></AgGridColumn>));
-        setRowNum(rowTotal);
+        let columTotal = columnNum + 1;
+        let columnSize = 300
+        if (columTotal === 0) {
+            columnSize = 50
+        }
+        setColumn(column.concat(<AgGridColumn field={columTotal.toString()} sortable={true} filter={true} width={columnSize} editable={true}></AgGridColumn>));
+        setColumnNum(columTotal);
     };
     const onDeleteBtnClick = event => {
-        let rowTotal = rowNum - 1;
-        rows.pop()
-        setRowNum(rowTotal);
+        if (columnNum > 0) {
+            let columTotal = columnNum - 1;
+            column.pop()
+            setColumnNum(columTotal);
+        }
     };
+    const onAddRow = () => {
+        let rowTotal = rows + 1;
+        let initialRow;
+        setRows(rowTotal);
+        let index = String.fromCharCode(rowTotal + 65);
+        // for (var i = 1; i < columnNum; i++) {
+        //     initialRow.concat({ i: '0'},)
+        // }
+        //setRowData(initialRow)
+        setRowData(rowData.concat({ 0: index }));
+    }
+    const onDeleteColumn = () => {
+        rowData.pop()
+        setRowData(rowData)
+    }
+    const onRemoveSelected = useCallback(() => {
+        const selectedData = gridRef.current.api.getSelectedRows();
+        const res = gridRef.current.api.applyTransaction({ remove: selectedData });
+    }, []);
+
+    const onCellValueChanged = ({ data }) => {
+        var focusedCell = gridRef.current.api.getFocusedCell();
+        var asd = gridRef.current.api.getEditingCells()
+        let rowIndex = focusedCell.rowIndex
+        var row = gridRef.current.api.getDisplayedRowAtIndex(rowIndex);
+        var cellValue = gridRef.current.api.getValue(focusedCell.column.colId, row.node)
+        console.log(data)
+        let input;
+        for (let i = 1; i <= columnNum; i++) {
+            if (data[i] != null) {
+                input = data[i];
+            }
+        }
+        console.log(input);
+        let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
+        if (operation === 'SUM(;)') {
+            console.log("suma")
+        } else if (operation === 'SUB(;)') {
+            console.log("resta")
+        }
+    };
+    const AddCells = () => {
+
+    }
+    const onRowEditingStarted = ({ data }) => {
+        console.log("Row editing")
+        console.log(data)
+    }
 
 
     return (
@@ -76,9 +101,15 @@ const Grid = () => {
                         onInput={onFilterTextBoxChanged}
                     ></TextField>
                     <button onClick={onAddBtnClick}>
-                        Add Row
+                        Add Column
                     </button>
                     <button onClick={onDeleteBtnClick}>
+                        Delete Column
+                    </button>
+                    <button onClick={onAddRow}>
+                        Add Row
+                    </button>
+                    <button onClick={onRemoveSelected}>
                         Delete Row
                     </button>
                     <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
@@ -89,8 +120,13 @@ const Grid = () => {
                             defaultColDef={defaultColDef}
                             ref={gridRef}
                             className={'table-expedition'}
+                            rowSelection={'single'}
+                            onCellValueChanged={onCellValueChanged}
+                            onRowEditingStarted={onRowEditingStarted}
                         >
-                            {rows}
+
+                            {column}
+
                         </AgGridReact>
                     </div>
                 </div >
