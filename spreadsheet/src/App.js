@@ -1,7 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
-import CustomSpreadSheet from "./Components/CustomSpreadSheet"
 
+import './App.css';
+import CustomSpreadSheet from "./Components/CustomSpreadSheet";
 function App() {
   return (
     <div className="App">

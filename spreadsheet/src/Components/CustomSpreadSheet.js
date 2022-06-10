@@ -74,6 +74,15 @@ const Grid = () => {
                 op2 = op2.slice(-3, -1);
                 let res = convertAndAddValue(op1, op2)
                 console.log(res)
+                let items = [...rowData];
+                let item = {
+                    ...items[rowIndex]
+                }
+                item[colNum] = res.toString()
+                items[rowIndex] = item
+                //found[colNum] = res
+                setRowData(items)
+                console.log(rowData)
             } else if (operation === 'SUB(;)') {
                 op1 = op1.slice(4, 6);
                 op2 = op2.slice(-3, -1);
@@ -82,11 +91,10 @@ const Grid = () => {
                 console.log(res)
                 let items = [...rowData];
                 let item = {
-                    ...items[rowIndex - 1]
+                    ...items[rowIndex]
                 }
-                //item = rowData.find(element => element[0] == op1[0]);
                 item[colNum] = res.toString()
-                items[colNum] = item
+                items[rowIndex] = item
                 //found[colNum] = res
                 setRowData(items)
                 console.log(rowData)
@@ -97,7 +105,11 @@ const Grid = () => {
     const convertAndAddValue = (op1, op2) => {
         let found = rowData.find(element => element[0] == op1[0]);
         let found2 = rowData.find(element => element[0] == op2[0]);
-        return parseInt(found[op1[1]]) + parseInt(found2[op2[1]]);
+        let res = parseInt(found[op1[1]]) + parseInt(found2[op2[1]])
+        if (Object.is(NaN, res)) {
+            res = 'Invalid Operation'
+        }
+        return res;
     }
     const onRowEditingStarted = ({ data }) => {
         console.log("Row editing")
@@ -106,7 +118,11 @@ const Grid = () => {
     const convertAndAddDec = (op1, op2) => {
         let found = rowData.find(element => element[0] == op1[0]);
         let found2 = rowData.find(element => element[0] == op2[0]);
-        return parseInt(found[op1[1]]) - parseInt(found2[op2[1]]);
+        let res = parseInt(found[op1[1]]) + parseInt(found2[op2[1]])
+        if (Object.is(NaN, res)) {
+            res = 'Invalid Operation'
+        }
+        return res;
     }
 
     return (
@@ -149,10 +165,9 @@ const Grid = () => {
                             {column}
 
                         </AgGridReact>
-                    </div>
+                    </div >
                 </div >
-            </div >
-            {/* <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
+                {/* <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
                 <AgGridReact
                     paginationPageSize={10}
                     rowData={rowData}
@@ -166,6 +181,7 @@ const Grid = () => {
                     <AgGridColumn field="3" sortable={true} filter={true} width={400} editable={true}></AgGridColumn>
                 </AgGridReact>
             </div> */}
+            </div >
         </div >
     );
 }
