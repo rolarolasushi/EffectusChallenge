@@ -56,23 +56,28 @@ const Grid = () => {
         let rowIndex = focusedCell.rowIndex
         var colNum = focusedCell.column.colId;
         let input = data[colNum];
-        let op1 = input;
-        let op2 = input;
-        if (input != null && input.length === 10) {
-            let operation = input.slice(0, 4) + input.slice(6, 7) + input.slice(9);
-            validateOperation(operation, op1, op2, rowIndex, colNum)
+        let ocurrence = (input.match(/;/g) || []).length;
+        if (input != null && ocurrence > 0) {
+            let operation = input.slice(0, 4) + input.slice(input.length - 1);
+            validateOperation(operation, input, rowIndex, colNum)
         } else if (input != null) {
             addConstants(input, rowIndex, colNum)
         }
 
     };
-    const validateOperation = (operation, op1, op2, rowIndex, colNum) => {
-        if (operation.length === 6) {
-            op1 = op1.slice(4, 6);
-            op2 = op2.slice(-3, -1);
+    const validateOperation = (operation, input, rowIndex, colNum) => {
+        var count = (input.match(/;/g) || []).length;
+        let op = [];
+        let x = 4;
+        let y = 6;
+        for (let i = 0; i < count + 1; i++) {
+            op[i] = input.slice(x, y);
+            x = x + 3;
+            y = y + 3;
         }
-        if (operation === 'SUM(;)') {
-            let res = convertAndAddValue(op1, op2)
+
+        if (operation === 'SUM()') {
+            let res = convertAndAddValue(op, count)
             let items = [...rowData];
             let item = {
                 ...items[rowIndex]
@@ -80,9 +85,8 @@ const Grid = () => {
             item[colNum] = res.toString()
             items[rowIndex] = item
             setRowData(items)
-        } else if (operation === 'SUB(;)') {
-            let res = convertAndAddDec(op1, op2)
-            console.log(res)
+        } else if (operation === 'SUB()') {
+            let res = convertAndAddDec(op, count)
             let items = [...rowData];
             let item = {
                 ...items[rowIndex]
@@ -105,12 +109,10 @@ const Grid = () => {
         }
         newArray = newArray.replace('j', '-')
         newArray = newArray.replaceAll('x', '+-')
-        console.log(newArray)
         let strArr = newArray.split('+');
         let sum = strArr.reduce(function (total, num) {
             return parseFloat(total) + parseFloat(num);
         });
-        console.log(sum)
         let items = [...rowData];
         let item = {
             ...items[rowIndex]
@@ -120,27 +122,33 @@ const Grid = () => {
         setRowData(items)
 
     }
-    const convertAndAddValue = (op1, op2) => {
-        let found = rowData.find(element => element[0] === op1[0]);
-        let found2 = rowData.find(element => element[0] === op2[0]);
-        let res = parseInt(found[op1[1]]) + parseInt(found2[op2[1]])
+    const convertAndAddValue = (op, count) => {
+        let found = [];
+        let res = 0;
+        for (let i = 0; i < count + 1; i++) {
+            found[i] = rowData.find(element => element[0] === op[i][0]);
+            let posElement = op[i][1];
+            res += parseInt(found[i][posElement])
+        }
         if (Object.is(NaN, res)) {
             res = runtimeEnv.NOT_A_NUMBER_MESSAGE
         }
         return res;
     }
-    const onRowEditingStarted = ({ data }) => {
-        console.log("Row editing")
-        console.log(data)
-    }
-    const convertAndAddDec = (op1, op2) => {
-        let found = rowData.find(element => element[0] === op1[0]);
-        let found2 = rowData.find(element => element[0] === op2[0]);
-        let res = parseInt(found[op1[1]]) - parseInt(found2[op2[1]])
-        if (Object.is(NaN, res)) {
+    const convertAndAddDec = (op, count) => {
+        let found = [];
+        let res = 0;
+        for (let i = 0; i < count + 1; i++) {
+            found[i] = rowData.find(element => element[0] === op[i][0]);
+            let posElement = op[i][1];
+            res += parseInt(found[i][posElement])
+        }
+        let posIni = op[0][1];
+        let resFin = parseInt(found[0][posIni]) - res + parseInt(found[0][posIni])
+        if (Object.is(NaN, resFin)) {
             res = runtimeEnv.NOT_A_NUMBER_MESSAGE
         }
-        return res;
+        return resFin;
     }
 
     return (
@@ -178,7 +186,6 @@ const Grid = () => {
                 className={'table-expedition'}
                 rowSelection={'single'}
                 onCellValueChanged={onCellValueChanged}
-                onRowEditingStarted={onRowEditingStarted}
             >
 
                 <AgGridColumn field={'0'} sortable={true} filter={true} width={50} editable={true}></AgGridColumn>
