@@ -1,0 +1,45 @@
+/* xs */
+@media (max-width: 600px) {
+    .table-expedition {
+        width: 88vw;
+    }
+
+    .gridFilterContent {
+        justify-content: flex-start;
+    }
+
+    .gridFilter {
+        width: 100%;
+    }
+}
+
+.gridFilterContent {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0rem 1rem;
+}
+
+.gridFilter {
+    width: 30%;
+}
+
+.table-expedition {
+    height: 40vh !important;
+    width: 97vw;
+    margin-bottom: 16px;
+    padding: 0rem 1rem;
+}
+
+/* sm */
+@media (max-width: 900px) {
+    .table-expedition {
+        width: 92vw;
+    }
+}
+
+/* md */
+@media (max-width: 1200px) {
+    .table-expedition {
+        width: 95vw;
+    }
+}

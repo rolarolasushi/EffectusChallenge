@@ -16,7 +16,13 @@
     "@mui/core": "^5.0.0-alpha.54",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.2",
-    "@syncfusion/ej2-react-grids": "^17.2.51"
+    "@syncfusion/ej2-react-grids": "^17.2.51",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/pro-regular-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18"
   },
   "scripts": {
     "start": "react-scripts start",
