@@ -6,6 +6,7 @@
 
     .gridFilterContent {
         justify-content: flex-start;
+
     }
 
     .gridFilter {
@@ -15,8 +16,8 @@
 
 .gridFilterContent {
     display: flex;
-    justify-content: flex-end;
-    padding: 0rem 1rem;
+    justify-content: flex-start;
+    padding: 1rem 1rem;
 }
 
 .gridFilter {

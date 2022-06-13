@@ -1,32 +1,37 @@
 
 import React from 'react';
 import { useCallback, useRef, useState } from 'react';
-import { TextField } from "@material-ui/core";
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { runtimeEnv } from "../runtime-env"
+import Button from '@mui/material/Button';
 const Grid = () => {
 
-    const [columnNum, setColumnNum] = useState(0);
+    const [columnNum, setColumnNum] = useState(18);
     const [column, setColumn] = useState([]);
-    const [rows, setRows] = useState(-1);
+    const [rows, setRows] = useState(10);
     const gridRef = useRef();
     const [rowData, setRowData] = useState([
+        { 0: 'A' },
+        { 0: 'B' },
+        { 0: 'C' },
+        { 0: 'D' },
+        { 0: 'E' },
+        { 0: 'F' },
+        { 0: 'G' },
+        { 0: 'H' },
+        { 0: 'I' },
+        { 0: 'J' },
+        { 0: 'K' },
     ])
     const defaultColDef = {
         resizable: true,
-
     };
-    const onFilterTextBoxChanged = useCallback(() => {
-        gridRef.current.api.setQuickFilter(
-            document.getElementById('filter-text-box').value
-        );
-    }, []);
 
     const onAddBtnClick = event => {
         let columTotal = columnNum + 1;
-        let columnSize = 300
+        let columnSize = 100
         if (columTotal === 0) {
             columnSize = 50
         }
@@ -34,7 +39,7 @@ const Grid = () => {
         setColumnNum(columTotal);
     };
     const onDeleteBtnClick = event => {
-        if (columnNum > 0) {
+        if (columnNum > 18) {
             let columTotal = columnNum - 1;
             column.pop()
             setColumnNum(columTotal);
@@ -46,10 +51,18 @@ const Grid = () => {
         let index = String.fromCharCode(rowTotal + 65);
         setRowData(rowData.concat({ 0: index }));
     }
-    const onRemoveSelected = useCallback(() => {
-        const selectedData = gridRef.current.api.getSelectedRows();
-        gridRef.current.api.applyTransaction({ remove: selectedData });
-    }, []);
+    const onRemoveSelected = () => {
+
+        if (rows > 10) {
+            const selectedData = gridRef.current.api.getSelectedRows();
+            gridRef.current.api.applyTransaction({ remove: selectedData });
+            let rowsTotal = rows - 1;
+            rowData.pop()
+            setRows(rowsTotal)
+        }
+
+
+    };
 
     const onCellValueChanged = ({ data }) => {
         var focusedCell = gridRef.current.api.getFocusedCell();
@@ -68,12 +81,21 @@ const Grid = () => {
     const validateOperation = (operation, input, rowIndex, colNum) => {
         var count = (input.match(/;/g) || []).length;
         let op = [];
-        let x = 4;
-        let y = 6;
+        let inputAux = input
+        let long;
+        let separationIndex
+        let inicialIndex = inputAux.indexOf("(", 0) + 1
+        let add = 0;
         for (let i = 0; i < count + 1; i++) {
-            op[i] = input.slice(x, y);
-            x = x + 3;
-            y = y + 3;
+            long = inputAux.length
+            separationIndex = inputAux.indexOf(";", 0)
+            if (separationIndex === -1) {
+                separationIndex = inputAux.indexOf(")", 0)
+            }
+            op[i] = inputAux.slice(inicialIndex, separationIndex);
+            inicialIndex = 0;
+            add = op[i].length
+            inputAux = inputAux.slice(separationIndex + 1, long)
         }
 
         if (operation === 'SUM()') {
@@ -127,7 +149,7 @@ const Grid = () => {
         let res = 0;
         for (let i = 0; i < count + 1; i++) {
             found[i] = rowData.find(element => element[0] === op[i][0]);
-            let posElement = op[i][1];
+            let posElement = op[i].slice(1);
             res += parseInt(found[i][posElement])
         }
         if (Object.is(NaN, res)) {
@@ -140,10 +162,10 @@ const Grid = () => {
         let res = 0;
         for (let i = 0; i < count + 1; i++) {
             found[i] = rowData.find(element => element[0] === op[i][0]);
-            let posElement = op[i][1];
+            let posElement = op[i].slice(1);
             res += parseInt(found[i][posElement])
         }
-        let posIni = op[0][1];
+        let posIni = op[0].slice(1);
         let resFin = parseInt(found[0][posIni]) - res + parseInt(found[0][posIni])
         if (Object.is(NaN, resFin)) {
             res = runtimeEnv.NOT_A_NUMBER_MESSAGE
@@ -155,30 +177,23 @@ const Grid = () => {
         <div className="ag-theme-balham">
 
             <div className="example-wrapper gridFilterContent">
-                <div className="example-header gridFilter">
-                    <TextField
-                        id="filter-text-box"
-                        label="Buscar en la tabla"
-                        margin="normal"
-                        autoComplete="off"
-                        onInput={onFilterTextBoxChanged}
-                    ></TextField>
-                    <button onClick={onAddBtnClick}>
-                        Add Column
-                    </button>
-                    <button onClick={onDeleteBtnClick}>
-                        Delete Column
-                    </button>
-                    <button onClick={onAddRow}>
-                        Add Row
-                    </button>
-                    <button onClick={onRemoveSelected}>
-                        Delete Row
-                    </button>
-                </div >
+
+                <Button onClick={onAddBtnClick} variant="contained" color="success">
+                    Add Column
+                </Button>
+                <Button onClick={onDeleteBtnClick} variant="outlined" color="error">
+                    Delete Column
+                </Button>
+                <Button onClick={onAddRow} variant="contained" color="success">
+                    Add Row
+                </Button>
+                <Button onClick={onRemoveSelected} variant="outlined" color="error">
+                    Delete Row
+                </Button>
+
             </div >
             <AgGridReact
-                paginationPageSize={10}
+                paginationPageSize={20}
                 rowData={rowData}
                 pagination={true}
                 defaultColDef={defaultColDef}
@@ -189,6 +204,24 @@ const Grid = () => {
             >
 
                 <AgGridColumn field={'0'} sortable={true} filter={true} width={50} editable={true}></AgGridColumn>
+                <AgGridColumn field={'1'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'2'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'3'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'4'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'5'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'6'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'7'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'8'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'9'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'10'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'11'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'12'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'13'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'14'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'15'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'16'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'17'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
+                <AgGridColumn field={'18'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
                 {column}
 
             </AgGridReact>
