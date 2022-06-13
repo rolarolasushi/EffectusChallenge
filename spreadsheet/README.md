@@ -11,8 +11,10 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+HOW TO:
+
+To add values just make normal adition like 8+13+200+3, to add specific cells do  for example SUM(A1;A2;C30)
+To substract values just make normal substraction like 80-13-1, to add specific cells do  for example SUB(A1;A2;C30) and it will substract A2 and C30 to A1
 
 ### `npm test`
 

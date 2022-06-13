@@ -10,7 +10,7 @@
     }
 
     .gridFilter {
-        width: 100%;
+        padding: 1rem 1rem;
     }
 }
 
@@ -21,7 +21,11 @@
 }
 
 .gridFilter {
-    width: 30%;
+    padding: 1rem 1rem 0rem 1rem;
+}
+
+.btns {
+    padding: 0px 10px 0px 0px;
 }
 
 .table-expedition {
