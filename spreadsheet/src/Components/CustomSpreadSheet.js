@@ -7,7 +7,6 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { runtimeEnv } from "../runtime-env"
 import Button from '@mui/material/Button';
 const CustomSpreadSheet = () => {
-
     const [columnNum, setColumnNum] = useState(18); //state to know how many colums there are
     const [column, setColumn] = useState([]); //the actual colums
     const [rows, setRows] = useState(10); //we keep count of how many rows there are
@@ -175,9 +174,6 @@ const CustomSpreadSheet = () => {
 
     }
 
-
-
-
     return (
         <div className="ag-theme-balham">
 
@@ -215,7 +211,7 @@ const CustomSpreadSheet = () => {
                 rowSelection={'single'}
                 onCellValueChanged={onCellValueChanged}
             >
-                <AgGridColumn field={'0'} sortable={true} filter={true} width={50} editable={true}></AgGridColumn>
+                <AgGridColumn field={'0'} sortable={true} filter={true} width={50} editable={true}  ></AgGridColumn>
                 <AgGridColumn field={'1'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
                 <AgGridColumn field={'2'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
                 <AgGridColumn field={'3'} sortable={true} filter={true} width={100} editable={true}></AgGridColumn>
